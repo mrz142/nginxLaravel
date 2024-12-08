@@ -22,6 +22,8 @@ services:
   php:
     image: php:7.4.12-fpm-alpine
     container_name: php
+    volumes:
+      - ./src:/var/www/html
     networks:
       - laravel
   mysql:
