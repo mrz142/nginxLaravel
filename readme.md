@@ -1,10 +1,9 @@
 ## to install laravel Run this
-######  docker-compose run --rm composer create-project laravel/laravel
+######  docker-compose run --rm composer create-project --prefer-dist laravel/laravel .
 ## if you have problem with laravel ==> 
 #### file_put_contents(/var/www/html/laravel/storage/framework/views/823ba0f21fb92d4957f115f907d5ac44.php): Failed to open stream: Permission denied
 #### inter this comond in php container 
 ###### docker exec -it php /bin/sh
-###### cd laravel
 ###### chmod -R gu+w storage
 ###### chmod -R guo+w storage
 ###### php artisan cache:clear
@@ -19,3 +18,8 @@
 ###### docker-compose run --rm artisan ...
 ## for example : 
 ###### docker-compose run --rm artisan migrate
+
+## to inter npm commond you can write this
+###### docker-compose run --rm npm ...
+## for example : 
+###### docker-compose run --rm npm install
