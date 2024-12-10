@@ -74,3 +74,15 @@ services:
     working_dir: /var/www/html
     networks:
       - laravel
+
+  artisan:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    container_name: artisan
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html/laravel
+    entrypoint: ["php","artisan"]
+    networks:
+      - laravel
