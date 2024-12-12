@@ -1,5 +1,21 @@
 ## to install laravel Run this
 ######  docker-compose run --rm composer create-project --prefer-dist laravel/laravel .
+## to install your own laravel project Run this
+######  cd src
+######  git clone https://github.com/username/repository.git .
+######  cd ..
+######  docker-compose run --rm composer install
+######  docker-compose run --rm npm install
+#####  generate .env file from .env.example and paste this in it
+###### DB_CONNECTION=mysql
+###### DB_HOST=mysql
+###### DB_PORT=3306
+###### DB_DATABASE=laraveldb
+###### DB_USERNAME=root
+###### DB_PASSWORD=secret
+######  docker-compose run --rm artisan key:generate
+######  docker-compose run --rm artisan migrate
+
 ## if you have problem with laravel ==> 
 #### file_put_contents(/var/www/html/laravel/storage/framework/views/823ba0f21fb92d4957f115f907d5ac44.php): Failed to open stream: Permission denied
 #### inter this comond in php container 
