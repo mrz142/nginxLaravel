@@ -4,7 +4,7 @@
 ######  cd src
 ######  git clone https://github.com/username/repository.git .
 ######  cd ..
-######  docker-compose run --rm composer install
+######  docker-compose run --rm composer update
 ######  docker-compose run --rm npm install
 #####  generate .env file from .env.example and paste this in it
 ###### DB_CONNECTION=mysql
