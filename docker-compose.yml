@@ -120,6 +120,43 @@ services:
     networks:
       - laravel
 
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0.15
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - laravel
+
+
+  echo-server:
+    image: node:18
+    container_name: echo-server
+    working_dir: /app
+    volumes:
+      - ./src:/app
+    command: >
+      sh -c "npm install -g laravel-echo-server &&
+            laravel-echo-server start"
+    ports:
+      - "6001:6001"
+    networks:
+      - laravel
+    depends_on:
+      - redis
+
   scheduler:
     build:
       context: .
