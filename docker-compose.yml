@@ -68,12 +68,23 @@ services:
       - "8080:80"
     networks:
       - laravel
+
+  # composer:
+  #   image: composer:2.8.3
+  #   container_name: composer
+  #   volumes:
+  #     - ./src:/var/www/html
+  #   working_dir: /var/www/html
+  #   networks:
+  #     - laravel
   composer:
-    image: composer:2.8.3
-    container_name: composer
+    build:
+      context: .
+      dockerfile: php.dockerfile
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
+    entrypoint: ["composer"]
     networks:
       - laravel
 
@@ -139,35 +150,7 @@ services:
       - no-new-privileges:true
     networks:
       - laravel
-
-  reverb:
-    image: laravel/reverb
-    container_name: reverb
-    ports:
-      - "6001:6001"
-    environment:
-      LARAVEL_REVERB_APP_KEY: your_app_key
-      LARAVEL_REVERB_SECRET_KEY: your_secret_key
-      LARAVEL_REVERB_ALLOWED_ORIGINS: "*"
-    networks:
-      - laravel
-
-  # echo-server:
-  #   image: node:18
-  #   container_name: echo-server
-  #   working_dir: /app
-  #   volumes:
-  #     - ./src:/app
-  #   command: >
-  #     sh -c "npm install -g laravel-echo-server &&
-  #           laravel-echo-server start"
-  #   ports:
-  #     - "6001:6001"
-  #   networks:
-  #     - laravel
-  #   depends_on:
-  #     - redis
-
+      
   scheduler:
     build:
       context: .
