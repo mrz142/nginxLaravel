@@ -3,7 +3,8 @@ networks:
   laravel:
     name: laravel
     driver: bridge
-
+volumes:
+  mysql:
 services:
   nginx:
     container_name: nginx
@@ -47,7 +48,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "no"
       MYSQL_DATABASE: "laraveldb"
     volumes:
-      - "./mysql:/var/lib/mysql/"
+      - mysql_data:/var/lib/mysql
     networks:
       - laravel
 
@@ -68,15 +69,6 @@ services:
       - "8080:80"
     networks:
       - laravel
-
-  # composer:
-  #   image: composer:2.8.3
-  #   container_name: composer
-  #   volumes:
-  #     - ./src:/var/www/html
-  #   working_dir: /var/www/html
-  #   networks:
-  #     - laravel
   composer:
     build:
       context: .
@@ -162,3 +154,4 @@ services:
     entrypoint: ["php", "artisan", "schedule:work"]
     networks:
       - laravel
+
