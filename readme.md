@@ -330,3 +330,14 @@ export default function Dashboard({ lamps }) {
     );
 }
 ```
+# for backup
+```
+chmod +x mysql_backup.sh
+```
+```
+crontab -e
+```
+paste this in the botom of the file opend
+```
+0 3 * * * /bin/bash /path/to/your/project/mysql_backup.sh >> /path/to/your/project/backup.log 2>&1
+```
