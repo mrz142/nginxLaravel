@@ -2,7 +2,7 @@
 
 # تنظیمات
 CONTAINER_NAME="mysql"         # نام کانتینر MySQL
-BACKUP_DIR="./mysql"   # مسیر ذخیره بک‌آپ‌ها در لوکال
+BACKUP_DIR="./mysql_backup"   # مسیر ذخیره بک‌آپ‌ها در لوکال
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 FILENAME="backup_$DATE.sql"
 

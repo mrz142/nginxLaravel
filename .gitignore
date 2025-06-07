@@ -1,4 +1,5 @@
 mysql/
+mysql_backup/
 pmadata/
 src/
 mosquitto/data
