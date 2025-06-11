@@ -3,8 +3,6 @@ networks:
   laravel:
     name: laravel
     driver: bridge
-volumes:
-  mysql:
 services:
   nginx:
     container_name: nginx
@@ -48,7 +46,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "no"
       MYSQL_DATABASE: "laraveldb"
     volumes:
-      - mysql:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
     networks:
       - laravel
 
@@ -62,7 +60,7 @@ services:
       PMA_ARBITRARY: 1
     restart: always
     volumes:
-      - "./pmadata:/etc/phpmyadmin/config.user.inc.php"
+      - "./pmadata/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php"
     depends_on:
       - mysql
     ports:
@@ -142,7 +140,7 @@ services:
       - no-new-privileges:true
     networks:
       - laravel
-      
+
   scheduler:
     build:
       context: .
