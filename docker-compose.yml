@@ -16,9 +16,11 @@ services:
       - redis
     ports:
       - "80:80"
-      # - "443:443"
+      - "443:443"
     volumes:
       - ./src:/var/www/html:delegated
+      - ./nginx:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
       - laravel
 
@@ -131,11 +133,13 @@ services:
           memory: 256M
     ports:
       - "1883:1883"
+      - "8883:8883"
       - "9001:9001"
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     security_opt:
       - no-new-privileges:true
     networks:

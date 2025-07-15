@@ -341,3 +341,23 @@ paste this in the botom of the file opend
 ```
 0 3 * * * /bin/bash /path/to/your/project/mysql_backup.sh >> /path/to/your/project/backup.log 2>&1
 ```
+
+
+# install ssl
+
+sudo apt-get update
+sudo apt-get install certbot python3-certbot-nginx
+
+sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
+
+sudo chmod 640 /etc/letsencrypt/archive/memo-pazirik.ir/privkey1.pem
+sudo chmod 644 /etc/letsencrypt/archive/memo-pazirik.ir/cert1.pem
+sudo chmod 644 /etc/letsencrypt/archive/memo-pazirik.ir/chain1.pem
+sudo chmod 644 /etc/letsencrypt/archive/memo-pazirik.ir/fullchain1.pem
+sudo chown root:root /etc/letsencrypt/archive/memo-pazirik.ir/*
+sudo chmod -R 755 /etc/letsencrypt/live/
+sudo chmod -R 755 /etc/letsencrypt/archive/
+
+docker-compose down
+docker-compose up -d --build nginx
+docker-compose up -d --build mosquitto
