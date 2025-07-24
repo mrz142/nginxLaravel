@@ -38,6 +38,7 @@ services:
     platform: "linux/x86_64"
     image: "mysql:8.0"
     container_name: mysql
+    restart: always
     tty: true
     ports:
       - "3306:3306"
@@ -157,3 +158,19 @@ services:
     networks:
       - laravel
 
+  mqtt-listener:
+      build:
+        context: .
+        dockerfile: php.dockerfile
+      container_name: mqtt-listener
+      command: php artisan mqtt:listen
+      depends_on:
+        - mysql
+        - redis
+        - mosquitto
+      volumes:
+        - ./src:/var/www/html
+      working_dir: /var/www/html
+      networks:
+        - laravel
+      restart: always
