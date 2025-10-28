@@ -1,12 +1,15 @@
-FROM nginx:stable-alpine
+###################################
+# Stage 1: Nginx
+###################################
+FROM nginx:stable-alpine AS nginx
 
+# کپی تنظیمات Nginx
 ADD ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-RUN mkdir -p /var/www/html
+# ساخت مسیر پروژه
+RUN mkdir -p /var/www/html \
+    && mkdir -p /etc/nginx/certs/mkcerts
 
-RUN mkdir -p /etc/nginx/certs/mkcerts
-
+# کپی گواهی‌ها (در صورت نیاز)
 ADD ./nginx/certs/ /etc/nginx/certs/mkcerts
-
-# ADD ./src/ /var/www/html
 
