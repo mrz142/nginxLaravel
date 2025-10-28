@@ -6,14 +6,19 @@ FROM php:8.2-fpm-alpine AS php
 # ساخت مسیر پروژه و افزودن ابزارهای مورد نیاز
 RUN mkdir -p /var/www/html && \
     apk --no-cache add shadow && \
-    usermod -u 1000 www-data && \
-    docker-php-ext-install pdo pdo_mysql mysqli pcntl
+    usermod -u 1000 www-data
 
-# نصب Redis، Git، Zip و ابزارهای موردنیاز
-RUN apk --no-cache add zip unzip git curl pcre-dev $PHPIZE_DEPS && \
+# نصب وابستگی‌های پایه
+RUN apk --no-cache add \
+    zip unzip git curl \
+    pcre-dev $PHPIZE_DEPS \
+    postgresql-dev
+
+# کامپایل و فعال‌سازی اکستنشن‌ها
+RUN docker-php-ext-install pdo pdo_mysql mysqli pcntl pdo_pgsql && \
     pecl install redis && \
     docker-php-ext-enable redis && \
-    apk del pcre-dev $PHPIZE_DEPS
+    apk del pcre-dev $PHPIZE_DEPS postgresql-dev
 
 # نصب composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -27,6 +32,3 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache && \
 USER www-data
 
 WORKDIR /var/www/html
-
-# اگر خواستی سورس پروژه را در build اضافه کنی (در حالت dev معمولاً bind mount داریم)
-# ADD ./src/ /var/www/html

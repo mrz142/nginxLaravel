@@ -1,8 +1,10 @@
-# version: "3.8"
+version: "3.8"
+
 networks:
   laravel:
     name: laravel
     driver: bridge
+
 services:
   nginx:
     container_name: nginx
@@ -11,12 +13,10 @@ services:
       dockerfile: nginx.dockerfile
     depends_on:
       - php
-      - mysql
-      - phpmyadmin
+      - postgres
       - redis
     ports:
       - "80:80"
-      # - "443:443"
     volumes:
       - ./src:/var/www/html:delegated
     networks:
@@ -32,42 +32,44 @@ services:
     networks:
       - laravel
 
-  mysql:
-    platform: "linux/x86_64"
-    image: "mysql:8.0"
-    container_name: mysql
-    tty: true
-    ports:
-      - "3306:3306"
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "secret"
-      MYSQL_USER: "laravel"
-      MYSQL_PASSWORD: "secret"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
-      MYSQL_DATABASE: "laraveldb"
+      POSTGRES_DB: laraveldb
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./postgres/data:/var/lib/postgresql/data
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laravel -d laraveldb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@localhost
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin/data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - laravel
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: secret
-      PMA_ARBITRARY: 1
-    restart: always
-    volumes:
-      - "./pmadata/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php"
-    depends_on:
-      - mysql
-    ports:
-      - "8080:80"
-    networks:
-      - laravel
   composer:
     build:
       context: .
@@ -90,6 +92,7 @@ services:
     entrypoint: ["php", "artisan"]
     networks:
       - laravel
+
   npm:
     image: node:22.12-alpine3.20
     container_name: npm
@@ -153,4 +156,3 @@ services:
     entrypoint: ["php", "artisan", "schedule:work"]
     networks:
       - laravel
-
