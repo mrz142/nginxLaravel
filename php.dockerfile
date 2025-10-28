@@ -3,24 +3,30 @@
 ###################################
 FROM php:8.2-fpm-alpine3.20 AS php
 
+# حل مشکل Permission Denied مخازن
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk update
+
 # ایجاد ساختار پروژه
 RUN mkdir -p /var/www/html
 
-# نصب وابستگی‌ها
+# نصب وابستگی‌ها + اکستنشن‌ها
 RUN apk add --no-cache \
-    shadow \
-    zip unzip git curl \
-    pcre-dev $PHPIZE_DEPS \
-    postgresql-dev \
+        shadow \
+        zip unzip git curl \
+        pcre-dev $PHPIZE_DEPS \
+        postgresql-dev \
     && docker-php-ext-install pdo pdo_mysql mysqli pcntl pdo_pgsql \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
 
-# نصب composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# نصب Composer
+RUN curl -sS https://getcomposer.org/installer | php -- \
+    --install-dir=/usr/local/bin \
+    --filename=composer
 
-# ایجاد پوشه‌های ضروری Laravel و تنظیم دسترسی اولیه (همه چیز با root)
+# ایجاد پوشه‌های ضروری Laravel + دسترسی
 RUN mkdir -p \
         /var/www/html/storage/framework/{sessions,views,cache} \
         /var/www/html/storage/logs \
@@ -34,7 +40,7 @@ RUN mkdir -p \
         /var/www/html/bootstrap/cache \
     && chmod 664 /var/www/html/storage/logs/laravel.log
 
-# تغییر کاربر به www-data برای امنیت
+# اجرای PHP با کاربر غیر root
 USER www-data
 
 WORKDIR /var/www/html
