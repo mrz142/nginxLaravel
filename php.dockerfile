@@ -1,13 +1,15 @@
 ###################################
 # Stage 2: PHP-FPM (Laravel)
 ###################################
-FROM php:8.2-fpm-alpine AS php
+# استفاده از نسخه 3.18 (پایدارترین حالت)
+FROM php:8.2-fpm-alpine3.18 AS php
 
-# ساخت مسیر پروژه و افزودن ابزارهای مورد نیاز
-RUN mkdir -p /var/www/html && \
-    apk --no-cache add shadow && \
+# تغییر میرور به یک سرور جایگزین و سپس نصب پکیج‌ها
+RUN sed -i 's/dl-cdn.alpinelinux.org/uk.alpinelinux.org/g' /etc/apk/repositories && \
+    mkdir -p /var/www/html && \
+    apk --no-cache add shadow postgresql-dev && \
     usermod -u 1000 www-data && \
-    docker-php-ext-install pdo pdo_mysql mysqli pcntl
+    docker-php-ext-install pdo pdo_mysql mysqli pcntl pdo_pgsql
 
 # نصب Redis، Git، Zip و ابزارهای موردنیاز
 RUN apk --no-cache add zip unzip git curl pcre-dev $PHPIZE_DEPS && \

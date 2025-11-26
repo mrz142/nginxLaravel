@@ -3,3 +3,4 @@ mysql_backup/
 src/
 mosquitto/data
 mosquitto/log
+docker/
